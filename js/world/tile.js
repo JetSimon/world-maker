@@ -1,5 +1,5 @@
 import { RGBA } from "../utils/color.js";
-const TILE_SIZE = 4;
+import { TILE_SIZE } from "./parameters.js";
 var TileType;
 (function (TileType) {
     TileType[TileType["Grass"] = 0] = "Grass";
@@ -17,6 +17,9 @@ class Tile {
     setType(type) {
         this.type = type;
     }
+    getType() {
+        return this.type;
+    }
     getColor() {
         let baseColor;
         switch (this.type) {
@@ -33,6 +36,9 @@ class Tile {
         return RGBA.lerpColor(new RGBA(0, 0, 0), baseColor, this.height);
     }
     draw(x, y, ctx) {
+        if (x < 0 || x > 500) {
+            return;
+        }
         ctx.fillStyle = this.getColor().toRGBString();
         ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
     }

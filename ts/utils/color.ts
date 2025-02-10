@@ -46,6 +46,14 @@ class RGBA {
     toRGBString() {
         return `rgb(${this.r}, ${this.g}, ${this.b})`;
     }
+
+    toRGBAString() {
+        return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a})`;
+    }
+
+    static randomColor() {
+        return new RGBA(Math.round(Math.random() * 255), Math.round(Math.random() * 255), Math.round(Math.random() * 255));
+    }
 }
 
 export { RGBA };

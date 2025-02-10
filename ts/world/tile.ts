@@ -1,6 +1,5 @@
 import { RGBA } from "../utils/color.js";
-
-const TILE_SIZE = 4;
+import { TILE_SIZE } from "./parameters.js";
 
 enum TileType {
     Grass,
@@ -18,6 +17,10 @@ class Tile {
 
     setType(type: TileType) {
         this.type = type;
+    }
+
+    getType() {
+        return this.type;
     }
 
     private getColor() {
@@ -38,6 +41,9 @@ class Tile {
     }
 
     draw(x: number, y: number, ctx: CanvasRenderingContext2D) {
+        if (x < 0 || x > 500) {
+            return;
+        }
         ctx.fillStyle = this.getColor().toRGBString();
         ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
     }

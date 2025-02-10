@@ -10,6 +10,17 @@ class Vector2 {
         this.x = x;
         this.y = y;
     }
+    toString() {
+        return this.x + "," + this.y;
+    }
+    neighbourVectors() {
+        const neighbours = [];
+        neighbours.push(new Vector2(this.x + 1, this.y));
+        neighbours.push(new Vector2(this.x - 1, this.y));
+        neighbours.push(new Vector2(this.x, this.y + 1));
+        neighbours.push(new Vector2(this.x, this.y - 1));
+        return neighbours;
+    }
     static add(a, b) {
         return new Vector2(a.x + b.x, a.y + b.y);
     }
