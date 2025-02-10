@@ -47,5 +47,9 @@ function randomGridPosition<T>(grid: T[][]) {
     return new Vector2(x, y);
 }
 
-export { makeEmptyGrid, flood, makeEmptyGridLike, randomGridPosition };
+function chooseRandom<T>(arr: T[]) {
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+
+export { chooseRandom, flood, makeEmptyGrid, makeEmptyGridLike, randomGridPosition };
 

@@ -1,8 +1,8 @@
 import { flood, makeEmptyGrid, makeEmptyGridLike, randomGridPosition } from "../utils/array.js";
 import { Vector2 } from "../utils/math.js";
 import { Perlin } from "../utils/perlin.js";
-import { Tile, TileType } from "./tile.js";
 import { Nation, NationPosition } from "./nation.js";
+import { Tile, TileType } from "./tile.js";
 class World {
     constructor(size) {
         this.tiles = makeEmptyGrid(size.y, size.x, () => new Tile());
@@ -11,11 +11,12 @@ class World {
     }
     makeWorld() {
         const perlin = new Perlin();
+        const zoom = 1.5;
         const scales = [0.02, 0.04, 0.08, 0.16];
         this.doTiles((x, y, tile) => {
             let height = 0;
             for (let i = 0; i < scales.length; i++) {
-                const scale = scales[i];
+                const scale = zoom * scales[i];
                 const perlinResult = ((perlin.get(x * scale, y * scale)) + 1) / 2;
                 height += perlinResult / Math.pow(i + 1, 2);
             }
@@ -26,7 +27,7 @@ class World {
     }
     makeNations() {
         const nationNumbers = makeEmptyGridLike(this.tiles, () => 0);
-        const numberOfNations = 5;
+        const numberOfNations = 20;
         this.nations = new Map();
         const nationQueue = [];
         for (let i = 0; i < numberOfNations; i++) {
@@ -68,12 +69,12 @@ class World {
             }
         }
     }
-    draw(ctx) {
+    draw(ctx, mousePos, view) {
         this.doTiles((x, y, tile) => {
             tile.draw(x, y, ctx);
         });
         for (const nation of this.nations.values()) {
-            nation.draw(ctx);
+            nation.draw(ctx, mousePos, view);
         }
     }
 }

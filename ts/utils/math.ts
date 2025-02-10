@@ -89,6 +89,18 @@ class Vector2 {
     isNaN() {
         return isNaN(this.x) || isNaN(this.y);
     }
+
+    round() {
+        return new Vector2(Math.round(this.x), Math.round(this.y));
+    }
+
+    floor() {
+        return new Vector2(Math.floor(this.x), Math.floor(this.y));
+    }
+
+    ceil() {
+        return new Vector2(Math.ceil(this.x), Math.ceil(this.y));
+    }
 }
 
 function clamp(x: number, min: number, max: number) {

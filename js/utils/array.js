@@ -38,5 +38,8 @@ function randomGridPosition(grid) {
     const x = Math.floor(randomRange(0, grid[0].length));
     return new Vector2(x, y);
 }
-export { makeEmptyGrid, flood, makeEmptyGridLike, randomGridPosition };
+function chooseRandom(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+export { chooseRandom, flood, makeEmptyGrid, makeEmptyGridLike, randomGridPosition };
 //# sourceMappingURL=array.js.map

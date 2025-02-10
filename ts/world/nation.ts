@@ -1,7 +1,24 @@
+import { GameView } from "../game/GameView.js";
+import { chooseRandom } from "../utils/array.js";
 import { RGBA } from "../utils/color.js";
 import { randomRange, Vector2 } from "../utils/math.js";
-import { TILE_SIZE } from "./parameters.js";
 import { Perlin } from "../utils/perlin.js";
+import { TILE_SIZE } from "./parameters.js";
+
+class NationNameMaker {
+    starts = ["Ada", "Efu", "Dread", "Frug", "West", "Est", "Bog", "Rip", "Can", "Ger", "Fra", "Si", "Mi", "Chi"];
+    mids = ["enu", "ack", "wro", "ja", "mu", "ze", "oi", "oo", "la"];
+    ends = ["ton", "berg", "ia", "don", "na", "an", "am"];
+
+    makeName() {
+        let name = chooseRandom(this.starts);
+        for (let i = 0; i < randomRange(0, 3); i++) {
+            name += chooseRandom(this.mids);
+        }
+        name += chooseRandom(this.ends);
+        return name;
+    }
+}
 
 class Nation {
     id: number;
@@ -12,6 +29,8 @@ class Nation {
 
     perlin: Perlin;
 
+    name: string;
+
     constructor(id: number) {
         this.ownedTiles = new Set();
         this.id = id;
@@ -19,11 +38,18 @@ class Nation {
         color.a = 1;
         this.color = color;
         this.perlin = new Perlin();
+
+        this.name = new NationNameMaker().makeName();
     }
 
-    draw(ctx: CanvasRenderingContext2D) {
+    draw(ctx: CanvasRenderingContext2D, mousePos: Vector2, view: GameView) {
 
         const ownedIds = new Set(Array.from(this.ownedTiles).map((x) => x.toString()));
+        const hovered = ownedIds.has(Vector2.multiply(mousePos, 1 / TILE_SIZE).floor().toString());
+
+        if (hovered) {
+            view.setHoverText(this.name);
+        }
 
         for (const pos of this.ownedTiles) {
 
@@ -31,7 +57,7 @@ class Nation {
                 ctx.fillStyle = RGBA.lerpColor(this.color, new RGBA(0, 0, 0), 0.3).toRGBAString();
             }
             else {
-                ctx.fillStyle = this.color.toRGBAString();
+                ctx.fillStyle = (hovered ? RGBA.lerpColor(this.color, new RGBA(255, 255, 255), 0.33) : this.color).toRGBAString();
             }
 
             ctx.fillRect(pos.x * TILE_SIZE, pos.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
@@ -61,3 +87,4 @@ class NationPosition {
 
 
 export { Nation, NationPosition };
+
