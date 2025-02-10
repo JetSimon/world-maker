@@ -27,6 +27,5 @@ canvas.addEventListener("mousemove", (e: MouseEvent) => {
 });
 
 setInterval(() => {
-    ctx.clearRect(0, 0, 500, 500);
     world.draw(ctx, mousePos, view);
 }, 1000 / 30);

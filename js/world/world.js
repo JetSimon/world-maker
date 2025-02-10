@@ -1,12 +1,14 @@
 import { flood, makeEmptyGrid, makeEmptyGridLike, randomGridPosition } from "../utils/array.js";
 import { Vector2 } from "../utils/math.js";
 import { Perlin } from "../utils/perlin.js";
-import { Nation, NationPosition } from "./nation.js";
+import { Nation } from "./nation.js";
+import { State, StatePosition } from "./state.js";
 import { Tile, TileType } from "./tile.js";
 class World {
     constructor(size) {
         this.tiles = makeEmptyGrid(size.y, size.x, () => new Tile());
         this.makeWorld();
+        this.makeStates();
         this.makeNations();
     }
     makeWorld() {
@@ -25,41 +27,52 @@ class World {
             tile.setType(tileType);
         });
     }
-    makeNations() {
-        const nationNumbers = makeEmptyGridLike(this.tiles, () => 0);
-        const numberOfNations = 20;
-        this.nations = new Map();
-        const nationQueue = [];
-        for (let i = 0; i < numberOfNations; i++) {
-            const pos = randomGridPosition(nationNumbers);
-            nationQueue.push(new NationPosition(i + 1, pos));
-            this.nations.set(i + 1, new Nation(i + 1));
+    makeStates() {
+        const stateNumbers = makeEmptyGridLike(this.tiles, () => 0);
+        const maxNumberOfStates = 100;
+        this.states = new Map();
+        const stateFrontier = [];
+        for (let i = 0; i < maxNumberOfStates; i++) {
+            const pos = randomGridPosition(stateNumbers);
+            stateFrontier.push(new StatePosition(i + 1, pos));
+            this.states.set(i + 1, new State(i + 1));
         }
-        while (nationQueue.length > 0) {
-            const popped = nationQueue[0];
-            const id = popped.nationId;
+        while (stateFrontier.length > 0) {
+            const popped = stateFrontier[0];
+            const id = popped.stateId;
             const x = popped.pos.x;
             const y = popped.pos.y;
-            nationQueue.splice(0, 1);
+            stateFrontier.splice(0, 1);
             const shouldFill = (x, y, tile) => {
-                const nation = this.nations.get(id);
-                const otherNation = tile == 0 ? null : this.nations.get(tile);
+                const nation = this.states.get(id);
+                const otherNation = tile == 0 ? null : this.states.get(tile);
                 const stronger = otherNation != null && nation.strengthAt(x, y) > otherNation.strengthAt(x, y);
                 return tile != id && (stronger || tile == 0) && this.tiles[y][x].getType() == TileType.Grass;
             };
             const toFill = [];
-            flood(x, y, nationNumbers, () => id, shouldFill, 2, 0, toFill);
+            flood(x, y, stateNumbers, () => id, shouldFill, 2, 0, toFill);
             for (const pos of toFill) {
-                nationQueue.push(new NationPosition(id, pos));
+                stateFrontier.push(new StatePosition(id, pos));
             }
         }
-        for (let y = 0; y < nationNumbers.length; y++) {
-            for (let x = 0; x < nationNumbers[0].length; x++) {
-                const n = nationNumbers[y][x];
+        for (let y = 0; y < stateNumbers.length; y++) {
+            for (let x = 0; x < stateNumbers[0].length; x++) {
+                const n = stateNumbers[y][x];
                 if (n != 0) {
-                    this.nations.get(n).ownedTiles.add(new Vector2(x, y));
+                    this.states.get(n).ownedTiles.add(new Vector2(x, y));
                 }
             }
+        }
+        for (const state of this.states.values()) {
+            if (state.ownedTiles.size == 0) {
+                this.states.delete(state.id);
+            }
+        }
+    }
+    makeNations() {
+        this.nations = [];
+        for (const state of this.states.values()) {
+            this.nations.push(new Nation([state]));
         }
     }
     doTiles(f) {
@@ -73,7 +86,7 @@ class World {
         this.doTiles((x, y, tile) => {
             tile.draw(x, y, ctx);
         });
-        for (const nation of this.nations.values()) {
+        for (const nation of this.nations) {
             nation.draw(ctx, mousePos, view);
         }
     }

@@ -19,7 +19,6 @@ canvas.addEventListener("mousemove", (e) => {
     view.setMouseText(`(${mousePos.x}, ${mousePos.y}) => (${Math.floor(mousePos.x / TILE_SIZE)}, ${Math.floor(mousePos.y / TILE_SIZE)})`);
 });
 setInterval(() => {
-    ctx.clearRect(0, 0, 500, 500);
     world.draw(ctx, mousePos, view);
 }, 1000 / 30);
 //# sourceMappingURL=main.js.map
