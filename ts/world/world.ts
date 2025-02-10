@@ -37,9 +37,9 @@ class World {
         }
     }
 
-    draw(ctx: CanvasRenderingContext2D) {
+    draw(ctx: CanvasRenderingContext2D, xOffet: number) {
         this.doTiles((x, y, tile) => {
-            tile.draw(x, y, ctx);
+            tile.draw(x + xOffet, y, ctx);
         });
     }
 }

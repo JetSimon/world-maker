@@ -25,9 +25,9 @@ class World {
             }
         }
     }
-    draw(ctx) {
+    draw(ctx, xOffet) {
         this.doTiles((x, y, tile) => {
-            tile.draw(x, y, ctx);
+            tile.draw(x + xOffet, y, ctx);
         });
     }
 }

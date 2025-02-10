@@ -6,4 +6,9 @@ const ctx: CanvasRenderingContext2D = canvas.getContext("2d");
 
 const world = new World(new Vector2(500 / 4, 500 / 4));
 
-world.draw(ctx);
+let xOffset = 0;
+world.draw(ctx, xOffset);
+
+document.addEventListener("keydown", (e: KeyboardEvent) => {
+
+});
